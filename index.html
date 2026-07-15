@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Tim Luis Techert – Developer</title>
 
     <!-- SEO -->
@@ -17,6 +17,13 @@
     <meta property="og:title" content="Tim Luis Techert – Developer">
     <meta property="og:description" content="Smart-Home-Integrationen, Minecraft-Infrastruktur und Tools, die ich selbst brauche. Python · Java · Swift · C# · Web.">
     <meta property="og:locale" content="de_DE">
+    <meta property="og:url" content="https://timluist-portfolio.vercel.app/">
+    <meta property="og:image" content="https://timluist-portfolio.vercel.app/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tim Luis Techert – Developer">
+    <meta name="twitter:image" content="https://timluist-portfolio.vercel.app/og.png">
 
     <!-- Favicon: Terminal-Prompt -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305080d'/%3E%3Cpath d='M8 11l6 5-6 5' stroke='%233ee8ff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='17' y='20' width='8' height='3' rx='1.5' fill='%23ff9f45'/%3E%3C/svg%3E">
@@ -27,6 +34,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="font" type="font/woff2" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2" crossorigin>
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -98,6 +106,38 @@
         }
 
         ::selection { background: rgba(62, 232, 255, 0.3); color: #fff; }
+        ::-moz-selection { background: rgba(62, 232, 255, 0.3); color: #fff; }
+
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(62, 232, 255, 0.3) transparent;
+            overscroll-behavior-y: none;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(62, 232, 255, 0.22);
+            border-radius: 5px;
+            border: 2px solid #05080d;
+        }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        * { -webkit-tap-highlight-color: transparent; }
+        a, button { touch-action: manipulation; }
+        :focus:not(:focus-visible) { outline: none; }
+        p { text-wrap: pretty; }
+
+        .btn:active, .nav-cta:active { transform: scale(0.97); }
+
+        @font-face {
+            font-family: 'JBM VF';
+            font-style: normal;
+            font-weight: 100 800;
+            font-display: swap;
+            src: url('https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+        }
+
+        html.vf-on .hero-title { font-family: 'JBM VF', var(--font-display); }
 
         h1, h2, h3 { text-wrap: balance; }
 
@@ -214,7 +254,7 @@
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 1000;
-            padding: 18px 28px;
+            padding: 18px max(28px, env(safe-area-inset-right)) 18px max(28px, env(safe-area-inset-left));
             background: rgba(5, 8, 13, 0.72);
             -webkit-backdrop-filter: blur(18px);
             backdrop-filter: blur(18px);
@@ -1058,6 +1098,254 @@
         .scroll-top:hover { border-color: var(--accent); transform: translateY(-4px); }
 
         /* ============================================================
+           Preloader: echter Fortschritt, dann Curtain-Wipe
+           ============================================================ */
+        .loader {
+            position: fixed;
+            inset: 0;
+            z-index: 4000;
+            background: var(--void);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            transition: transform 0.85s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .loader.done { transform: translateY(-100%); }
+
+        .loader-num {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(4rem, 14vw, 9rem);
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(62, 232, 255, 0.55);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .loader-num::after { content: '%'; font-size: 0.35em; -webkit-text-stroke: 1px rgba(62, 232, 255, 0.4); }
+
+        .loader-bar {
+            width: min(280px, 60vw);
+            height: 2px;
+            background: var(--surface-2);
+            overflow: hidden;
+        }
+
+        .loader-bar i {
+            display: block;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--warm));
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .loader-label {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            color: var(--muted-2);
+            text-transform: uppercase;
+        }
+
+        html.loading { overflow: hidden; }
+        html.loading .hero .stage,
+        html.loading .ltr { animation-play-state: paused !important; }
+
+        /* Scroll-Velocity-Skew */
+        [data-skew] { will-change: transform; }
+
+        /* Outline-zu-Fill-Titel (Galerie) */
+        .fillwrap { position: relative; }
+
+        .fill-base {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(62, 232, 255, 0.45);
+        }
+
+        .fill-top {
+            position: absolute;
+            inset: 0;
+            color: var(--text);
+            clip-path: inset(100% 0 0 0);
+            will-change: clip-path;
+        }
+
+        .fill-top .tok { color: var(--accent); }
+
+        /* Party-Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translate(-50%, 20px);
+            z-index: 3500;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            background: var(--surface);
+            border: 1px solid rgba(62, 232, 255, 0.4);
+            border-radius: var(--radius);
+            padding: 13px 22px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(62, 232, 255, 0.12);
+        }
+
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        /* ============================================================
+           Live-GitHub-Zeile
+           ============================================================ */
+        .live-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-size: 0.82rem;
+            color: var(--muted);
+            padding: 12px 16px;
+            background: var(--void-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+        }
+
+        .live-line .pulse {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #3fdd78;
+            box-shadow: 0 0 10px rgba(63, 221, 120, 0.8);
+            animation: livePulse 2.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+
+        .live-line b { color: var(--accent); font-weight: 700; }
+
+        /* ============================================================
+           Terminal-Overlay (Easter Egg)
+           ============================================================ */
+        .hero-term { cursor: pointer; transition: color 0.25s; }
+        .hero-term:hover .cmd { color: var(--accent); }
+
+        .term-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2500;
+            background: rgba(5, 8, 13, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+        }
+
+        .term-overlay.open { opacity: 1; visibility: visible; }
+
+        .term-win {
+            width: min(680px, 100%);
+            background: var(--surface);
+            border: 1px solid var(--line-strong);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 50px 110px rgba(0, 0, 0, 0.7);
+            transform: translateY(16px) scale(0.98);
+            transition: transform 0.35s var(--ease-spring);
+        }
+
+        .term-overlay.open .term-win { transform: none; }
+
+        .term-bar {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tdot { width: 11px; height: 11px; border-radius: 50%; background: #22303e; }
+        .tdot.r { background: var(--danger); }
+
+        .term-title {
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-left: 8px;
+            flex: 1;
+        }
+
+        .term-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .term-close:hover { color: var(--text); background: rgba(150, 220, 255, 0.08); }
+
+        .term-out {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            line-height: 1.9;
+            padding: 18px 20px 6px;
+            height: min(320px, 46vh);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-deep) transparent;
+        }
+
+        .term-out .tp { color: var(--warm); }
+        .term-out .tc { color: var(--accent); }
+        .term-out .tm { color: var(--muted); }
+        .term-out .te { color: var(--danger); }
+        .term-out pre {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            line-height: 1.35;
+            color: var(--accent);
+            margin: 4px 0;
+        }
+
+        .term-in {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px 18px;
+        }
+
+        .term-in .p { color: var(--warm); font-family: var(--font-display); }
+
+        .term-in input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            caret-color: var(--accent);
+        }
+
+        /* ============================================================
            Responsive
            ============================================================ */
         @media (max-width: 1024px) {
@@ -1113,13 +1401,60 @@
 
             .reveal, .hero .stage { opacity: 1 !important; transform: none !important; }
             .ltr, .w { opacity: 1 !important; transform: none !important; animation: none !important; }
-            #gl, .grain, .frags { display: none !important; }
+            #gl, .grain, .frags, .loader { display: none !important; }
             .marquee-track { transform: none !important; }
             .hero-term .caret, .nav-logo .c { animation: none !important; }
+            [data-skew] { transform: none !important; }
+            .fill-top { clip-path: inset(0 0 0 0) !important; }
         }
     </style>
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-num" id="loaderNum">0</div>
+        <div class="loader-bar"><i id="loaderFill"></i></div>
+        <div class="loader-label">Portfolio wird geladen</div>
+    </div>
+    <script>
+    (function () {
+        var el = document.getElementById('loader');
+        var skip = false;
+        try { skip = !!sessionStorage.getItem('pf_seen'); } catch (e) {}
+        if (skip || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            el.parentNode.removeChild(el);
+            return;
+        }
+        document.documentElement.classList.add('loading');
+        var num = document.getElementById('loaderNum');
+        var fill = document.getElementById('loaderFill');
+        var target = 12, val = 0, done = false;
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function () { target = Math.max(target, 72); });
+        }
+        window.addEventListener('load', function () { target = 100; });
+        setTimeout(function () { target = 100; }, 1500);
+        function tick() {
+            if (done) return;
+            target = Math.min(100, target + 0.2);
+            val += (target - val) * 0.11;
+            if (val > 99.2) val = 100;
+            num.textContent = Math.floor(val);
+            fill.style.transform = 'scaleX(' + (val / 100).toFixed(3) + ')';
+            if (val >= 100) {
+                done = true;
+                el.classList.add('done');
+                document.documentElement.classList.remove('loading');
+                try { sessionStorage.setItem('pf_seen', '1'); } catch (e) {}
+                setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 950);
+                return;
+            }
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    })();
+    </script>
+
     <!-- Hintergrund -->
     <div class="glow-fallback" aria-hidden="true"></div>
     <canvas id="gl" aria-hidden="true"></canvas>
@@ -1223,7 +1558,7 @@
             <div class="container">
                 <div class="section-header reveal">
                     <span class="eyebrow">Über mich</span>
-                    <h2 class="section-title">Hey, ich bin <span class="tok">Tim</span>.</h2>
+                    <h2 class="section-title" data-skew>Hey, ich bin <span class="tok">Tim</span>.</h2>
                 </div>
 
                 <div class="about-grid">
@@ -1243,6 +1578,10 @@
                         </p>
                         <div class="code-line">
                             <b>while</b> (true) { lernen(); bauen(); verbessern(); }
+                        </div>
+                        <div class="live-line" id="ghLive" hidden>
+                            <span class="pulse" aria-hidden="true"></span>
+                            <span id="ghLiveText"></span>
                         </div>
                     </div>
 
@@ -1279,7 +1618,10 @@
                     <div class="container" style="padding: 0;">
                         <div class="section-header reveal" style="margin-bottom: 0;">
                             <span class="eyebrow">Projekte</span>
-                            <h2 class="section-title">Was ich <span class="tok">baue</span>.</h2>
+                            <h2 class="section-title fillwrap" data-no-split>
+                                <span class="fill-base" aria-hidden="true">Was ich baue.</span>
+                                <span class="fill-top" id="galleryFill">Was ich <span class="tok">baue</span>.</span>
+                            </h2>
                             <p class="section-description">Scroll dich durch – alles Open Source auf GitHub.</p>
                         </div>
                     </div>
@@ -1427,7 +1769,7 @@
             <div class="container">
                 <div class="section-header reveal">
                     <span class="eyebrow">Stack</span>
-                    <h2 class="section-title">Womit ich <span class="tok">arbeite</span>.</h2>
+                    <h2 class="section-title" data-skew>Womit ich <span class="tok">arbeite</span>.</h2>
                     <p class="section-description">Sprache ist Werkzeug – ich nehme, was das Problem am besten löst.</p>
                 </div>
 
@@ -1459,7 +1801,7 @@
             <div class="container">
                 <div class="section-header center reveal">
                     <span class="eyebrow warm">Links</span>
-                    <h2 class="section-title">Hier findest du <span class="tok">mich</span>.</h2>
+                    <h2 class="section-title" data-skew>Hier findest du <span class="tok">mich</span>.</h2>
                     <p class="section-description">Alle Kanäle an einem Ort – oder direkt über solo.to.</p>
                 </div>
 
@@ -1528,9 +1870,28 @@
         </div>
         <div class="footer-bottom">
             <p>© 2026 Tim Luis Techert</p>
-            <p>exit 0</p>
+            <p>drück <span style="color: var(--accent);">T</span> fürs Terminal · exit 0</p>
         </div>
     </footer>
+
+    <!-- Terminal-Overlay (Easter Egg: Klick auf $ whoami oder Taste T) -->
+    <div class="term-overlay" id="termOverlay" role="dialog" aria-modal="true" aria-label="Interaktives Terminal">
+        <div class="term-win">
+            <div class="term-bar">
+                <span class="tdot r" aria-hidden="true"></span><span class="tdot" aria-hidden="true"></span><span class="tdot" aria-hidden="true"></span>
+                <span class="term-title">tim@portfolio: ~</span>
+                <button class="term-close" onclick="closeTerm()" aria-label="Terminal schließen">×</button>
+            </div>
+            <div class="term-out" id="termOut" aria-live="polite"></div>
+            <div class="term-in">
+                <span class="p" aria-hidden="true">$</span>
+                <input id="termInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Befehl eingeben" placeholder="help">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <!-- Scroll to Top -->
     <button class="scroll-top" id="scrollTop" onclick="scrollToTop()" aria-label="Nach oben scrollen">
@@ -1567,6 +1928,10 @@
                 'uniform vec2 uRes;',
                 'uniform float uScroll;',
                 'uniform vec2 uMouse;',
+                'uniform vec2 uT1; uniform vec2 uT2; uniform vec2 uT3; uniform vec2 uT4;',
+                'uniform float uVel;',
+                'uniform float uSV;',
+                'uniform float uParty;',
                 'float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
                 'float noise(vec2 p) {',
                 '  vec2 i = floor(p); vec2 f = fract(p);',
@@ -1579,10 +1944,20 @@
                 '  for (int i = 0; i < 4; i++) { v += a * noise(p); p *= 2.05; a *= 0.5; }',
                 '  return v;',
                 '}',
+                'vec2 splat(vec2 uv, vec2 c, vec2 asp, float r) {',
+                '  vec2 d = (uv - c) * asp;',
+                '  return (uv - c) * exp(-dot(d, d) * r);',
+                '}',
                 'void main() {',
                 '  vec2 uv = gl_FragCoord.xy / uRes.xy;',
-                '  vec2 p = uv * vec2(uRes.x / uRes.y, 1.0);',
-                '  float t = uT * 0.04;',
+                '  vec2 asp = vec2(uRes.x / uRes.y, 1.0);',
+                '  vec2 flow = splat(uv, uT1, asp, 30.0) * 1.0',
+                '            + splat(uv, uT2, asp, 18.0) * 0.7',
+                '            + splat(uv, uT3, asp, 10.0) * 0.5',
+                '            + splat(uv, uT4, asp, 6.0) * 0.35;',
+                '  vec2 p = (uv + flow * (0.5 + uVel * 3.0)) * asp;',
+                '  float t = uT * 0.04 * (1.0 + uParty * 1.6);',
+                '  p.y += (fbm(vec2(p.x * 3.0, uT * 0.5)) - 0.5) * uSV * 0.35;',
                 '  vec2 drift = vec2(t * 0.6, -t * 0.25) + (uMouse - 0.5) * 0.22;',
                 '  float n1 = fbm(p * 1.6 + drift);',
                 '  float n2 = fbm(p * 3.2 - drift * 1.4 + n1);',
@@ -1595,6 +1970,13 @@
                 '  col += cyan * band * (0.55 - dawn * 0.25);',
                 '  col += warm * smoothstep(0.75, 1.05, uv.x * 0.2 + n2) * dawn * 0.5;',
                 '  col += warm * (1.0 - uv.y) * (1.0 - uv.y) * dawn * 0.16;',
+                '  vec2 dm = (uv - uT1) * asp;',
+                '  col += cyan * exp(-dot(dm, dm) * 38.0) * (0.10 + uVel * 1.4);',
+                '  vec3 party = vec3(',
+                '    0.5 + 0.5 * sin(uT * 2.0 + uv.x * 5.0),',
+                '    0.5 + 0.5 * sin(uT * 2.0 + 2.09 + uv.y * 5.0),',
+                '    0.5 + 0.5 * sin(uT * 2.0 + 4.18 + (uv.x + uv.y) * 3.0));',
+                '  col = mix(col, col * 1.2 + party * (band * 0.45 + 0.05), clamp(uParty, 0.0, 1.0));',
                 '  float vig = smoothstep(1.25, 0.4, length(uv - 0.5));',
                 '  col *= vig;',
                 '  gl_FragColor = vec4(col, 1.0);',
@@ -1631,8 +2013,19 @@
             const uRes = gl.getUniformLocation(prog, 'uRes');
             const uScroll = gl.getUniformLocation(prog, 'uScroll');
             const uMouse = gl.getUniformLocation(prog, 'uMouse');
+            const uT1 = gl.getUniformLocation(prog, 'uT1');
+            const uT2 = gl.getUniformLocation(prog, 'uT2');
+            const uT3 = gl.getUniformLocation(prog, 'uT3');
+            const uT4 = gl.getUniformLocation(prog, 'uT4');
+            const uVel = gl.getUniformLocation(prog, 'uVel');
+            const uSV = gl.getUniformLocation(prog, 'uSV');
+            const uParty = gl.getUniformLocation(prog, 'uParty');
 
             let mx = 0.5, my = 0.5, running = true;
+            // Trail: vier nachlaufende Punkte mit unterschiedlicher Trägheit
+            const trail = [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5], [0.5, 0.5]];
+            const trailK = [0.3, 0.16, 0.08, 0.04];
+            let pmx = 0.5, pmy = 0.5, vel = 0, svS = 0, partyS = 0, lastScrollY = 0;
 
             function resize() {
                 // Halbe Auflösung: der Shader ist weich, das sieht man nicht – spart massiv GPU
@@ -1653,10 +2046,36 @@
                 if (!running) return;
                 const docH = document.documentElement.scrollHeight - innerHeight;
                 const sp = docH > 0 ? window.scrollY / docH : 0;
+
+                // Maus-Geschwindigkeit (gedämpft) + Trail nachziehen
+                const instV = Math.hypot(mx - pmx, my - pmy);
+                vel += (Math.min(instV * 14, 1) - vel) * 0.1;
+                pmx = mx; pmy = my;
+                const targets = [[mx, 1 - my], trail[0], trail[1], trail[2]];
+                for (let i = 0; i < 4; i++) {
+                    trail[i][0] += (targets[i][0] - trail[i][0]) * trailK[i];
+                    trail[i][1] += (targets[i][1] - trail[i][1]) * trailK[i];
+                }
+
+                // Scroll-Velocity (gedämpft, normiert)
+                const dyS = window.scrollY - lastScrollY;
+                lastScrollY = window.scrollY;
+                svS += (Math.max(-1, Math.min(1, dyS / 18)) - svS) * 0.08;
+
+                // Party-Mode weich einblenden
+                partyS += ((window.__party || 0) - partyS) * 0.09;
+
                 gl.uniform1f(uT, t * 0.001);
                 gl.uniform2f(uRes, canvas.width, canvas.height);
                 gl.uniform1f(uScroll, sp);
                 gl.uniform2f(uMouse, mx, 1.0 - my);
+                gl.uniform2f(uT1, trail[0][0], trail[0][1]);
+                gl.uniform2f(uT2, trail[1][0], trail[1][1]);
+                gl.uniform2f(uT3, trail[2][0], trail[2][1]);
+                gl.uniform2f(uT4, trail[3][0], trail[3][1]);
+                gl.uniform1f(uVel, vel);
+                gl.uniform1f(uSV, svS);
+                gl.uniform1f(uParty, partyS);
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
                 requestAnimationFrame(frame);
             }
@@ -1751,6 +2170,10 @@
             const hwrap = document.querySelector('.hwrap');
             const hTrack = document.getElementById('hTrack');
             const hpFill = document.getElementById('hpFill');
+            const galleryFill = document.getElementById('galleryFill');
+            const skewEls = Array.from(document.querySelectorAll('[data-skew]'));
+            const grainEl = document.querySelector('.grain');
+            let velS = 0;
             const hDesktop = window.matchMedia('(min-width: 769px)').matches;
             if (hwrap && hTrack && hDesktop) document.documentElement.classList.add('js-h');
 
@@ -1764,7 +2187,7 @@
                 el._done = false;
                 groupIndex.set(key, i + 1);
                 const title = el.querySelector('.section-title');
-                if (title && !title._split) {
+                if (title && !title._split && !title.hasAttribute('data-no-split')) {
                     title._split = true;
                     // Wörter wrappen, aber vorhandene Spans (.tok) als Ganzes behandeln
                     const parts = [];
@@ -1836,7 +2259,15 @@
                     mqTrack.style.transform = 'translateX(' + (-mqX).toFixed(2) + 'px)';
                 }
 
-                if (y === lastY && mx === lastMx) { requestAnimationFrame(frame); return; }
+                // Velocity-System: Skew auf Display-Text + Grain-Boost
+                velS += (dy - velS) * 0.1;
+                const skewDeg = Math.max(-6, Math.min(6, velS * -0.07));
+                for (const el of skewEls) {
+                    el.style.transform = Math.abs(skewDeg) > 0.05 ? 'skewY(' + skewDeg.toFixed(2) + 'deg)' : '';
+                }
+                if (grainEl) grainEl.style.opacity = (0.05 + Math.min(0.06, Math.abs(velS) * 0.0035)).toFixed(3);
+
+                if (y === lastY && mx === lastMx && Math.abs(velS) < 0.05) { requestAnimationFrame(frame); return; }
                 lastY = y;
                 lastMx = mx;
 
@@ -1862,6 +2293,10 @@
                     const hp = clamp((y - hTop) / hRange, 0, 1);
                     hTrack.style.transform = 'translateX(' + (-(hp * hMax)).toFixed(1) + 'px)';
                     if (hpFill) hpFill.style.width = (hp * 100).toFixed(1) + '%';
+                    if (galleryFill) {
+                        const fp = clamp(hp * 2.2, 0, 1);
+                        galleryFill.style.clipPath = 'inset(' + ((1 - fp) * 100).toFixed(1) + '% 0 0 0)';
+                    }
                 }
 
                 // Scrub-Reveals
@@ -2026,6 +2461,210 @@
                     glare.style.opacity = '0';
                 });
             });
+        })();
+
+        // ============================================
+        // Variable Font: Gewicht folgt dem Cursor (Hero)
+        // ============================================
+        (function initVFProximity() {
+            if (prefersReducedMotion || !finePointer) return;
+            const letters = Array.from(document.querySelectorAll('.hero-title .ltr'));
+            if (!letters.length) return;
+            document.documentElement.classList.add('vf-on');
+            let vmx = -9999, vmy = -9999;
+            let centers = [];
+            function measureVF() {
+                centers = letters.map(l => {
+                    const r = l.getBoundingClientRect();
+                    return [r.left + r.width / 2, r.top + r.height / 2];
+                });
+            }
+            window.addEventListener('resize', measureVF);
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(measureVF, 2600));
+            setTimeout(measureVF, 3200);
+            window.addEventListener('mousemove', e => { vmx = e.clientX; vmy = e.clientY; }, { passive: true });
+            letters.forEach(l => { l._w = 800; });
+            (function vfLoop() {
+                if (window.scrollY < innerHeight && centers.length) {
+                    letters.forEach((l, i) => {
+                        const c = centers[i];
+                        if (!c) return;
+                        const d = Math.hypot(vmx - c[0], vmy - c[1]);
+                        const t = 800 - Math.max(0, 1 - Math.min(d / 260, 1)) * 480;
+                        l._w += (t - l._w) * 0.16;
+                        l.style.fontVariationSettings = "'wght' " + l._w.toFixed(0);
+                    });
+                }
+                requestAnimationFrame(vfLoop);
+            })();
+        })();
+
+        // ============================================
+        // Konami-Code: Party-Mode im Shader
+        // ============================================
+        window.__party = 0;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (!t) return;
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._h);
+            t._h = setTimeout(() => t.classList.remove('show'), 3200);
+        }
+
+        function togglePartyMode() {
+            window.__party = window.__party > 0.5 ? 0 : 1;
+            showToast(window.__party ? '🏆 ACHIEVEMENT UNLOCKED · PARTY-MODE' : 'PARTY-MODE AUS');
+        }
+
+        (function initKonami() {
+            const seq = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+            let pos = 0;
+            document.addEventListener('keydown', e => {
+                const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+                pos = (k === seq[pos]) ? pos + 1 : (k === seq[0] ? 1 : 0);
+                if (pos === seq.length) { pos = 0; togglePartyMode(); }
+            });
+        })();
+
+        // Konsolen-Signatur für neugierige Devs
+        try {
+            console.log(
+                '%c~/timluis %c Hey, Dev! 👋 Der Code ist handgeschrieben – kein Framework. Drück T fürs Terminal, Konami-Code für den Party-Mode. → github.com/TimLuist1 ',
+                'background:#3ee8ff;color:#041018;font-weight:bold;padding:5px 10px;border-radius:4px 0 0 4px;font-family:monospace',
+                'background:#0b1119;color:#8ba1b5;padding:5px 10px;border-radius:0 4px 4px 0;font-family:monospace'
+            );
+        } catch (e) {}
+
+        // ============================================
+        // Live-GitHub-Daten (Repo-Zahl + letzter Push)
+        // ============================================
+        (async function liveGitHub() {
+            function timeAgoDe(iso) {
+                const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+                if (s < 3600) return 'vor ' + Math.max(1, Math.floor(s / 60)) + ' Min.';
+                if (s < 86400) return 'vor ' + Math.floor(s / 3600) + ' Std.';
+                const d = Math.floor(s / 86400);
+                return d === 1 ? 'gestern' : 'vor ' + d + ' Tagen';
+            }
+            try {
+                const [user, repos] = await Promise.all([
+                    fetch('https://api.github.com/users/TimLuist1').then(r => r.ok ? r.json() : null),
+                    fetch('https://api.github.com/users/TimLuist1/repos?sort=pushed&per_page=1').then(r => r.ok ? r.json() : null)
+                ]);
+                if (user && typeof user.public_repos === 'number' && user.public_repos > 0) {
+                    const tile = document.querySelector('[data-count]');
+                    if (tile) tile.dataset.count = String(user.public_repos);
+                }
+                if (repos && repos[0] && repos[0].pushed_at) {
+                    const el = document.getElementById('ghLive');
+                    const txt = document.getElementById('ghLiveText');
+                    if (el && txt) {
+                        txt.innerHTML = 'Live von GitHub: zuletzt gepusht ' + timeAgoDe(repos[0].pushed_at) + ' – <b>' + repos[0].name + '</b>';
+                        el.hidden = false;
+                    }
+                }
+            } catch (e) { /* offline oder Rate-Limit: statische Werte bleiben */ }
+        })();
+
+        // ============================================
+        // Terminal-Easter-Egg
+        // ============================================
+        const termOverlay = document.getElementById('termOverlay');
+        const termOut = document.getElementById('termOut');
+        const termInput = document.getElementById('termInput');
+
+        function termPrint(htmlLine) {
+            const div = document.createElement('div');
+            div.innerHTML = htmlLine;
+            termOut.appendChild(div);
+            termOut.scrollTop = termOut.scrollHeight;
+        }
+
+        function openTerm() {
+            termOverlay.classList.add('open');
+            if (termOut.childElementCount === 0) {
+                termPrint('<span class="tm">Willkommen im Portfolio-Terminal. Tipp <span class="tc">help</span> für Befehle.</span>');
+            }
+            setTimeout(() => termInput.focus(), 120);
+        }
+
+        function closeTerm() {
+            termOverlay.classList.remove('open');
+            termInput.blur();
+        }
+
+        const TERM_CMDS = {
+            help: () => termPrint('<span class="tm">Befehle: <span class="tc">whoami</span> · <span class="tc">projekte</span> · <span class="tc">stack</span> · <span class="tc">links</span> · <span class="tc">classattack</span> · <span class="tc">github</span> · <span class="tc">clear</span> · <span class="tc">exit</span></span>'),
+            whoami: () => termPrint('<span class="tc">Tim Luis Techert</span> <span class="tm">– Developer · Smart Home · Server</span>'),
+            projekte: () => { termPrint('<span class="tm">ha-lumilink · ha-homekey-addon · ha-wapploxx · hue-secure-camera-ha · vcvideo-nvr-ha · ai-dashboard-generator · vdj-remote · ServerRestart · jellyfin-youtube-metadata</span>'); termPrint('<span class="tm">→ <span class="tc">github</span> für alle Repos</span>'); },
+            projects: () => TERM_CMDS.projekte(),
+            stack: () => termPrint('<span class="tm">Python · Java · Swift · C# · JavaScript · Home Assistant · Docker · Vercel</span>'),
+            links: () => termPrint('<a href="https://solo.to/timluist" target="_blank" rel="noopener">solo.to/timluist</a> <span class="tm">– alles an einem Ort</span>'),
+            github: () => { window.open('https://github.com/TimLuist1', '_blank'); termPrint('<span class="tm">öffne GitHub …</span>'); },
+            classattack: () => { termPrint('<span class="tc">ClassAttack 4 kommt bald.</span> <span class="tm">öffne info.classattack.net …</span>'); window.open('https://info.classattack.net', '_blank'); },
+            sudo: () => termPrint('<span class="te">Netter Versuch. Hier hat nur Tim root.</span>'),
+            konami: () => { togglePartyMode(); termPrint('<span class="tc">Party-Mode umgeschaltet.</span> <span class="tm">(geht auch mit ↑↑↓↓←→←→BA)</span>'); },
+            'hire-me': () => { termPrint('<span class="tc">Berechtigung erteilt.</span> <span class="tm">→ öffne solo.to/timluist …</span>'); window.open('https://solo.to/timluist', '_blank'); },
+            minecraft: () => termPrint('<pre>  ▓▓  ▓▓\n  ▓▓  ▓▓\n    ▓▓\n  ▓▓▓▓▓▓\n  ▓▓  ▓▓</pre><span class="tm">Tssssss … nur Spaß. Creeper sind hier friedlich.</span>'),
+            hallo: () => termPrint('<span class="tc">Hey! Schön, dass du das Terminal gefunden hast. 🎉</span>'),
+            hi: () => TERM_CMDS.hallo(),
+            clear: () => { termOut.innerHTML = ''; },
+            exit: () => closeTerm()
+        };
+
+        const termHistory = [];
+        let termHistPos = -1;
+
+        termInput.addEventListener('keydown', e => {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (termHistory.length) {
+                    termHistPos = termHistPos < 0 ? termHistory.length - 1 : Math.max(0, termHistPos - 1);
+                    termInput.value = termHistory[termHistPos];
+                }
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (termHistPos >= 0) {
+                    termHistPos = Math.min(termHistory.length - 1, termHistPos + 1);
+                    termInput.value = termHistPos === termHistory.length - 1 ? '' : termHistory[termHistPos + 1] || '';
+                }
+                return;
+            }
+            if (e.key !== 'Enter') return;
+            const raw = termInput.value.trim();
+            termInput.value = '';
+            if (!raw) return;
+            termHistory.push(raw);
+            termHistPos = -1;
+            termPrint('<span class="tp">$</span> ' + raw.replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c])));
+            const cmd = raw.toLowerCase().split(/\s+/)[0];
+            if (TERM_CMDS[cmd]) TERM_CMDS[cmd]();
+            else termPrint('<span class="te">bash: ' + cmd.replace(/[<>&]/g, '') + ': Befehl nicht gefunden.</span> <span class="tm">Versuch <span class="tc">help</span>.</span>');
+        });
+
+        (function initTermTriggers() {
+            const heroTerm = document.querySelector('.hero-term');
+            if (heroTerm) {
+                heroTerm.addEventListener('click', openTerm);
+                heroTerm.setAttribute('title', 'Klick mich – echtes Terminal!');
+                heroTerm.setAttribute('role', 'button');
+                heroTerm.setAttribute('tabindex', '0');
+                heroTerm.removeAttribute('aria-hidden');
+                heroTerm.setAttribute('aria-label', 'Interaktives Terminal öffnen');
+                heroTerm.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTerm(); } });
+            }
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeTerm();
+                if ((e.key === 't' || e.key === 'T' || e.key === '~' || e.key === '`') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                    const tag = document.activeElement ? document.activeElement.tagName : '';
+                    if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') { e.preventDefault(); openTerm(); }
+                }
+            });
+            termOverlay.addEventListener('click', e => { if (e.target === termOverlay) closeTerm(); });
         })();
 
         // ============================================
